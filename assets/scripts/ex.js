@@ -1,12 +1,11 @@
-const addBookBtn = document.getElementById("add");
+const addMovieBtn = document.getElementById("add");
 const searchBtn = document.getElementById("search-btn");
-const findByCaragory = document.getElementById("filter-catagory");
+const findByTitle = document.getElementById("filter-title");
 const updatebook = document.getElementById("update");
 let f = true;
 
 // dialogue part ...............................
 
-let dialog_ind;
 const getData = () => {
   let books;
   if (localStorage.getItem("user") == null) books = [];
@@ -14,21 +13,20 @@ const getData = () => {
   return books;
 };
 
-const show = function (ind) {
-  dialog_ind = ind;
-  const dialog = document.querySelectorAll("dialog");
-  console.log(dialog[dialog_ind]);
-  dialog[dialog_ind].showModal();
+const show = function () {
+  const dialog = document.querySelector("dialog");
+  console.log("show");
+  dialog.showModal();
 };
 const closee = function () {
-  const dialog = document.querySelectorAll("dialog");
-  console.log(dialog[dialog_ind]);
-  dialog[dialog_ind].close();
+  const dialog = document.querySelector("dialog");
+  console.log("close");
+  dialog.close();
 };
 
-// delete Book from storage .............................
+// delete movie from storage .............................
 
-const DeleteBook = function (ind) {
+const DeleteMovie = function (ind) {
   let books = getData();
   if (books.length == 1) {
     books = [];
@@ -37,7 +35,7 @@ const DeleteBook = function (ind) {
   renderbooks(books);
 };
 
-//render Book ...............................................
+//render movie ...............................................
 
 const renderbooks = function (booksarr) {
   const booksList = document.getElementById("items");
@@ -58,11 +56,10 @@ const renderbooks = function (booksarr) {
     const showBtn = document.createElement("button");
     const closeBtn = document.createElement("button");
 
-    dialogue.classList.add("dialog");
     deletebtn.textContent = "Remove";
     updatebtn.textContent = "Update";
-    deletebtn.setAttribute("onclick", `DeleteBook(${ind})`);
-    updatebtn.setAttribute("onclick", `UpdateBook(${ind})`);
+    deletebtn.setAttribute("onclick", `DeleteMovie(${ind})`);
+    updatebtn.setAttribute("onclick", `UpdateMovie(${ind})`);
 
     bookobj.classList.add("visible");
     bookobj.classList.add("card");
@@ -82,8 +79,8 @@ const renderbooks = function (booksarr) {
     deletebtn.style.marginLeft = "1rem";
 
     showBtn.classList.add("dialogue-show");
-    showBtn.setAttribute("onclick", `show(${ind})`);
-    closeBtn.setAttribute("onclick", `closee()`);
+    showBtn.setAttribute("onclick", "show()");
+    closeBtn.setAttribute("onclick", "closee()");
     closeBtn.classList.add("dialogue-close");
 
     closeBtn.textContent = "Close";
@@ -97,7 +94,8 @@ const renderbooks = function (booksarr) {
     dialogue.append(Catagory);
     dialogue.append(Author);
     dialogue.append(closeBtn);
-
+    //console.log(" ye hai catagory ", Catagory);
+    console.log(dialogue);
     bookobj.append(imgurl);
     bookobj.append(Name);
     bookobj.append(dialogue);
@@ -105,6 +103,7 @@ const renderbooks = function (booksarr) {
     bookobj.append(deletebtn);
     bookobj.append(updatebtn);
     booksList.append(bookobj);
+    // console.log(" ye hai catagory ", bookobj);
   });
   if (f == true) localStorage.setItem("user", JSON.stringify(booksarr));
 };
@@ -117,7 +116,6 @@ let indx;
 
 updatebook.addEventListener("click", () => {
   console.log("update horiya");
-  console.log("rupali k andar : ", indx);
   const imgurl = document.getElementById("imgurl").value;
   const Name = document.getElementById("name").value;
   const Publication = document.getElementById("publication").value;
@@ -128,7 +126,7 @@ updatebook.addEventListener("click", () => {
     imgurl.trim() === "" ||
     Publication.trim() === "" ||
     Name.trim() === "" ||
-    Catagory === "" ||
+    Catagory == "" ||
     Author.trim() === ""
   ) {
     alert("Please Enter Valid Details");
@@ -143,7 +141,7 @@ updatebook.addEventListener("click", () => {
   books[indx].Catagory = Catagory;
   books[indx].Author = Author;
 
-  addBookBtn.style.display = "block";
+  addMovieBtn.style.display = "block";
   updatebook.style.display = "none";
   renderbooks(books);
 
@@ -151,30 +149,21 @@ updatebook.addEventListener("click", () => {
   document.getElementById("name").value = "";
   document.getElementById("publication").value = "";
   document.getElementById("catagory").value = "";
-  document.getElementById("author").value = "";
+  document.getElemetnById("author").value = "";
 });
 
-//update Book..........................
+//update movie..........................
 
-const UpdateBook = function (ind) {
+const UpdateMovie = function (ind) {
   indx = ind;
-  addBookBtn.style.display = "none";
+  addMovieBtn.style.display = "none";
   updatebook.style.display = "block";
-  let books = getData();
-
-  document.getElementById("imgurl").value = books[indx].imgurl;
-  document.getElementById("name").value = books[indx].Name;
-  document.getElementById("publication").value = books[indx].Publication;
-  document.getElementById("catagory").value = books[indx].Catagory;
-  document.getElementById("author").value = books[indx].Author;
-
   document.getElementById("imgurl").focus();
-  console.log("rupali k bahar : ", ind);
 };
 
-// add Booke.............................
+// add moviee.............................
 
-const addBookHandler = function () {
+const addMovieHandler = function () {
   const imgurl = document.getElementById("imgurl").value;
   const Name = document.getElementById("name").value;
   const Publication = document.getElementById("publication").value;
@@ -185,24 +174,24 @@ const addBookHandler = function () {
     imgurl.trim() === "" ||
     Publication.trim() === "" ||
     Name.trim() === "" ||
-    Catagory === "" ||
+    Catagory == "" ||
     Author.trim() === ""
   ) {
     alert("Please Enter Valid Details");
     return;
   }
 
-  const newBook = {
+  const newMovie = {
     imgurl,
     Name,
     Publication,
     Catagory,
     Author,
-    id: Math.floor(Math.random() * 1e10),
+    id: Math.random(),
   };
 
   let books = getData();
-  books.push(newBook);
+  books.push(newMovie);
   renderbooks(books);
 
   document.getElementById("imgurl").value = "";
@@ -212,20 +201,25 @@ const addBookHandler = function () {
   document.getElementById("author").value = "";
 };
 
-// filter Book by catagory........................................
+// filter movie by catagory........................................
 
-addBookBtn.addEventListener("click", addBookHandler);
+addMovieBtn.addEventListener("click", addMovieHandler);
 
-const filterBookHandler = function () {
-  const Catagory = findByCaragory.value;
+const filterMovieHandler = function () {
+  const Catagory = findByTitle.value;
   let books = getData();
-  let newarr = [];
-  books.map((book) => {
-    if (book.Catagory.includes(Catagory)) newarr.push(book);
+  let newarr = books.filter((book) => {
+    if (book.Catagory == Catagory) {
+      console.log("mila");
+      console.log(book);
+      return book;
+    }
   });
   f = false;
   renderbooks(newarr);
   f = true;
 };
 
-searchBtn.addEventListener("click", filterBookHandler);
+searchBtn.addEventListener("click", filterMovieHandler);
+
+["horro", "criminal"];
